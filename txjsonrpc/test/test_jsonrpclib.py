@@ -1,7 +1,9 @@
+from __future__ import absolute_import
 from twisted.trial.unittest import TestCase
 from twisted.internet import defer
 from txjsonrpc.jsonrpclib import (
     Fault, VERSION_PRE1, VERSION_1, VERSION_2, dumps, loads)
+from six.moves import zip
 
 
 class DumpTestCase(TestCase):

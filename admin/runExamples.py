@@ -1,8 +1,11 @@
 #!/usr/bin/python
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import sys
 from subprocess import Popen, PIPE
 from time import sleep
+from six.moves import zip
 
 
 examples = [
@@ -55,7 +58,7 @@ def preprocess(result):
 for example, expectedResult in zip(examples, expectedResults):
     expectedResult = preprocess(expectedResult)
     client, server = example
-    print "Checking examples/%s against examples/%s ..." % (client, server)
+    print("Checking examples/%s against examples/%s ..." % (client, server))
     # start server
     command = "twistd -l /dev/null -noy %s" % os.path.join("examples", server)
     pid = Popen(command, shell=True).pid
@@ -68,5 +71,5 @@ for example, expectedResult in zip(examples, expectedResults):
     os.kill(pid, 15)
     # check results
     if result != expectedResult:
-        print "ERROR: expected '%s' but got '%s'" % (expectedResult, result)
+        print("ERROR: expected '%s' but got '%s'" % (expectedResult, result))
         sys.exit(1)

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from txjsonrpc.web import jsonrpc
 from twisted.web import server
 from twisted.internet import reactor, ssl

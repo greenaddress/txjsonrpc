@@ -11,8 +11,9 @@ API Stability: unstable
 Maintainer: U{Duncan McGreggor<mailto:oubiwann@adytum.us>}
 """
 from __future__ import nested_scopes
-import urlparse
-import xmlrpclib
+from __future__ import absolute_import
+import six.moves.urllib.parse
+import six.moves.xmlrpc_client
 
 from twisted.web import resource, server
 from twisted.internet import defer, reactor
@@ -24,10 +25,10 @@ from txjsonrpc.jsonrpc import BaseProxy, BaseQueryFactory, BaseSubhandler
 
 
 # Useful so people don't need to import xmlrpclib directly.
-Fault = xmlrpclib.Fault
-Binary = xmlrpclib.Binary
-Boolean = xmlrpclib.Boolean
-DateTime = xmlrpclib.DateTime
+Fault = six.moves.xmlrpc_client.Fault
+Binary = six.moves.xmlrpc_client.Binary
+Boolean = six.moves.xmlrpc_client.Boolean
+DateTime = six.moves.xmlrpc_client.DateTime
 
 
 class NoSuchFunction(Fault):
@@ -90,9 +91,9 @@ class JSONRPC(resource.Resource, BaseSubhandler):
         request.content.seek(0, 0)
         # Unmarshal the JSON-RPC data.
         content = request.content.read()
-        if not content and request.method=='GET' and request.args.has_key('request'):
+        if not content and request.method=='GET' and 'request' in request.args:
             content=request.args['request'][0]
-        self.callback = request.args['callback'][0] if request.args.has_key('callback') else None
+        self.callback = request.args['callback'][0] if 'callback' in request.args else None
         self.is_jsonp = True if self.callback else False
         parsed = jsonrpclib.loads(content)
         functionPath = parsed.get("method")
@@ -109,7 +110,7 @@ class JSONRPC(resource.Resource, BaseSubhandler):
         # versions...
         try:
             function = self._getFunction(functionPath)
-        except jsonrpclib.Fault, f:
+        except jsonrpclib.Fault as f:
             self._cbRender(f, request, id, version)
         else:
             if not self.is_jsonp:
@@ -221,7 +222,7 @@ class Proxy(BaseProxy):
         of default twisted.internet.ssl.ClientContextFactory.
         """
         BaseProxy.__init__(self, version, factoryClass)
-        scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
+        scheme, netloc, path, params, query, fragment = six.moves.urllib.parse.urlparse(url)
         netlocParts = netloc.split('@')
         if len(netlocParts) == 2:
             userpass = netlocParts.pop(0).split(':')

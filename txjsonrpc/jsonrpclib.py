@@ -2,7 +2,8 @@
 Requires simplejson; can be downloaded from
 http://cheeseshop.python.org/pypi/simplejson
 """
-import xmlrpclib
+from __future__ import absolute_import
+import six.moves.xmlrpc_client
 from datetime import datetime
 
 try:
@@ -12,14 +13,14 @@ except ImportError:
 
 
 # From xmlrpclib.
-SERVER_ERROR = xmlrpclib.SERVER_ERROR
-NOT_WELLFORMED_ERROR = xmlrpclib.NOT_WELLFORMED_ERROR
-UNSUPPORTED_ENCODING = xmlrpclib.UNSUPPORTED_ENCODING
-INVALID_ENCODING_CHAR = xmlrpclib.INVALID_ENCODING_CHAR
-INVALID_JSONRPC = xmlrpclib.INVALID_XMLRPC
-METHOD_NOT_FOUND = xmlrpclib.METHOD_NOT_FOUND
-INVALID_METHOD_PARAMS = xmlrpclib.INVALID_METHOD_PARAMS
-INTERNAL_ERROR = xmlrpclib.INTERNAL_ERROR
+SERVER_ERROR = six.moves.xmlrpc_client.SERVER_ERROR
+NOT_WELLFORMED_ERROR = six.moves.xmlrpc_client.NOT_WELLFORMED_ERROR
+UNSUPPORTED_ENCODING = six.moves.xmlrpc_client.UNSUPPORTED_ENCODING
+INVALID_ENCODING_CHAR = six.moves.xmlrpc_client.INVALID_ENCODING_CHAR
+INVALID_JSONRPC = six.moves.xmlrpc_client.INVALID_XMLRPC
+METHOD_NOT_FOUND = six.moves.xmlrpc_client.METHOD_NOT_FOUND
+INVALID_METHOD_PARAMS = six.moves.xmlrpc_client.INVALID_METHOD_PARAMS
+INTERNAL_ERROR = six.moves.xmlrpc_client.INTERNAL_ERROR
 
 # Custom errors.
 METHOD_NOT_CALLABLE = -32604
@@ -30,7 +31,7 @@ VERSION_1 = 1
 VERSION_2 = 2
 
 
-class Fault(xmlrpclib.Fault):
+class Fault(six.moves.xmlrpc_client.Fault):
     pass
 
 
@@ -137,7 +138,7 @@ def getparser():
     return parser, marshaller
 
 
-class Transport(xmlrpclib.Transport):
+class Transport(six.moves.xmlrpc_client.Transport):
     """
     Handles an HTTP transaction to an XML-RPC server.
     """
@@ -172,13 +173,13 @@ def _v2Notification(method="", params=[], *args):
     return _v2Request(method=method, params=params, id=None)
 
 
-class ServerProxy(xmlrpclib.ServerProxy):
+class ServerProxy(six.moves.xmlrpc_client.ServerProxy):
     """
     XXX add missing docstring
     """
     def __init__(self, uri, transport=Transport(), version=VERSION_PRE1, *args,
                  **kwds):
-        xmlrpclib.ServerProxy.__init__(self, uri, transport, *args, **kwds)
+        six.moves.xmlrpc_client.ServerProxy.__init__(self, uri, transport, *args, **kwds)
         self.version = version
 
     def __request(self, *args):

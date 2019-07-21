@@ -7,6 +7,7 @@ API Stability: semi-stable
 
 Maintainer: U{Duncan McGreggor <mailto:oubiwann@adytum.us>}
 """
+from __future__ import absolute_import
 from twisted.internet import defer, protocol, reactor
 from twisted.protocols import basic
 from twisted.python import log

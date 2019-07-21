@@ -3,6 +3,7 @@
 """
 Test JSON-RPC support.
 """
+from __future__ import absolute_import
 from twisted.internet import reactor, defer
 from twisted.trial import unittest
 from twisted.web import server, static
@@ -10,6 +11,7 @@ from twisted.web import server, static
 from txjsonrpc import jsonrpclib
 from txjsonrpc.jsonrpc import addIntrospection
 from txjsonrpc.web import jsonrpc
+from six.moves import zip
 
 
 class TestRuntimeError(RuntimeError):

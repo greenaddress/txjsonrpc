@@ -1,7 +1,9 @@
+from __future__ import absolute_import
 from twisted.trial.unittest import TestCase
 
 from txjsonrpc.jsonrpc import BaseProxy, BaseQueryFactory
 from txjsonrpc.jsonrpclib import Fault, VERSION_PRE1, VERSION_1, VERSION_2
+import six
 
 
 class BaseQueryFactoryTestCase(TestCase):
@@ -46,7 +48,7 @@ class BaseQueryFactoryTestCase(TestCase):
 
         def check_result(result):
             self.assertEquals(
-                result, {u'something': 1})
+                result, {six.u('something'): 1})
 
         factory = BaseQueryFactory("someMethod")
         d = factory.deferred
@@ -58,7 +60,7 @@ class BaseQueryFactoryTestCase(TestCase):
         def check_error(error):
             self.assertTrue(isinstance(error.value, Fault))
             self.assertEquals(error.value.faultCode, 1)
-            self.assertEquals(error.value.faultString, u"oops")
+            self.assertEquals(error.value.faultString, six.u("oops"))
 
         factory = BaseQueryFactory("someMethod")
         d = factory.deferred

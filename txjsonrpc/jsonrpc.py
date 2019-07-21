@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from twisted.internet import defer, protocol
 from twisted.python import reflect
 
@@ -22,7 +23,7 @@ class BaseSubhandler:
         return self.subHandlers.get(prefix, None)
 
     def getSubHandlerPrefixes(self):
-        return self.subHandlers.keys()
+        return list(self.subHandlers.keys())
 
     def _getFunction(self, functionPath):
         """
@@ -94,7 +95,7 @@ class BaseQueryFactory(protocol.ClientFactory):
                 result = result["result"]
             elif isinstance(result, list):
                 result = result[0]
-        except Exception, error:
+        except Exception as error:
             self.deferred.errback(error)
             self.deferred = None
         else:
