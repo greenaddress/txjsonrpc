@@ -58,13 +58,13 @@ def _validateReST(text):
     """
     import docutils.utils
     import docutils.parsers.rst
-    import StringIO
+    from io import StringIO
 
     doc = docutils.utils.new_document("validator")
     # our desired settings
     doc.reporter.halt_level = 5
     doc.reporter.report_level = 1
-    stream = doc.reporter.stream = StringIO.StringIO()
+    stream = doc.reporter.stream = StringIO()
     # docutils buglets (?)
     doc.settings.tab_width = 2
     doc.settings.pep_references = doc.settings.rfc_references = False
