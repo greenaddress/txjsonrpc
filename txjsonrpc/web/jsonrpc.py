@@ -23,6 +23,8 @@ from twisted.web import http
 from txjsonrpc import jsonrpclib
 from txjsonrpc.jsonrpc import BaseProxy, BaseQueryFactory, BaseSubhandler
 
+import base64
+
 
 # Useful so people don't need to import xmlrpclib directly.
 Fault = six.moves.xmlrpc_client.Fault
@@ -147,25 +149,33 @@ class JSONRPC(resource.Resource, BaseSubhandler):
 
 class QueryProtocol(http.HTTPClient):
 
+    def _sendCommand(self, command, path):
+        self.sendCommand(command.encode("utf-8"), path.encode("utf-8"))
+
+    def _sendHeader(self, header, value):
+        self.sendHeader(header.encode("utf-8"), value.encode("utf-8"))
+
     def connectionMade(self):
-        self.sendCommand('POST', self.factory.path)
-        self.sendHeader('User-Agent', 'Twisted/JSONRPClib')
-        self.sendHeader('Host', self.factory.host)
-        self.sendHeader('Content-type', 'text/json')
-        self.sendHeader('Content-length', str(len(self.factory.payload)))
+        self._sendCommand('POST', self.factory.path)
+        self._sendHeader('User-Agent', 'Twisted/JSONRPClib')
+        self._sendHeader('Host', self.factory.host)
+        self._sendHeader('Content-type', 'text/json')
+        self._sendHeader('Content-length', str(len(self.factory.payload)))
         if self.factory.user:
             auth = '%s:%s' % (self.factory.user, self.factory.password)
-            auth = auth.encode('base64').strip()
-            self.sendHeader('Authorization', 'Basic %s' % (auth,))
+            auth = base64.b64encode(auth.encode("utf-8")).strip().decode("utf-8")
+            auth = 'Basic %s' % (auth,)
+            self._sendHeader('Authorization', auth)
         self.endHeaders()
-        self.transport.write(self.factory.payload)
+        self.transport.write(self.factory.payload.encode("utf-8"))
 
     def handleStatus(self, version, status, message):
+        status = status.decode("utf-8")
         if status != '200':
             self.factory.badStatus(status, message)
 
     def handleResponse(self, contents):
-        self.factory.parseResponse(contents)
+        self.factory.parseResponse(contents.decode("utf-8"))
 
 
 class QueryFactory(BaseQueryFactory):
